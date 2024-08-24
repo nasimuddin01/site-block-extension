@@ -19,3 +19,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         });
     }
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "leaveFacebook") {
+        chrome.tabs.create({ url: 'about:newtab' }, () => {
+            chrome.tabs.remove(sender.tab.id);
+        });
+    }
+});
