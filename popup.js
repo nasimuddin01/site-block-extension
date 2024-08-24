@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const timeSpentElement = document.getElementById('timeSpent');
+    const timeRemainingElement = document.getElementById('timeRemaining');
     const timeLimitInput = document.getElementById('timeLimit');
     const saveButton = document.getElementById('save');
 
@@ -23,9 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update time spent display
     function updateTimeSpent(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        timeSpentElement.textContent = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        const spentMinutes = Math.floor(seconds / 60);
+        const spentSeconds = seconds % 60;
+        timeSpentElement.textContent = `${spentMinutes}:${spentSeconds.toString().padStart(2, '0')}`;
+
+        const totalRemainingSeconds = timeLimitInput.value * 60 - (spentMinutes * 60 + spentSeconds);
+        const remainingMinutes = Math.floor(totalRemainingSeconds / 60);
+        const remainingSeconds = totalRemainingSeconds % 60;
+        timeRemainingElement.textContent = `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     // Listen for updates from the background script

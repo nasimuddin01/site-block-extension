@@ -10,7 +10,7 @@ function createOverlay() {
     overlay.style.left = '0';
     overlay.style.width = '100%';
     overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
     overlay.style.zIndex = '9999';
     overlay.style.display = 'flex';
     overlay.style.justifyContent = 'center';
@@ -19,7 +19,7 @@ function createOverlay() {
     overlay.style.color = 'white';
     overlay.style.fontSize = '24px';
     overlay.innerHTML = `
-    <h1>Time's up!</h1>
+    <p>⏰</p>
     <p>It's time to go back to work.</p>
     <button id="leaveButton" style="margin-top: 20px; padding: 10px 20px; font-size: 18px;">Leave Facebook</button>
   `;
