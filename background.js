@@ -24,6 +24,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
         if (tab.url && tab.url.includes('facebook.com')) {
             activeTabId = tab.id;
             resetDailyUsage();
+            startActiveTimer();
         } else {
             activeTabId = null;
             stopActiveTimer();
@@ -35,6 +36,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('facebook.com')) {
         activeTabId = tabId;
         resetDailyUsage();
+        startActiveTimer();
     }
 });
 
