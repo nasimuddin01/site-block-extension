@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "Facebook Usage Limiter",
+    "version": "1.0",
+    "description": "Limits Facebook usage to a specified time",
+    "permissions": [
+        "storage",
+        "alarms",
+        "scripting",
+        "tabs"
+    ],
+    "host_permissions": [
+        "*://*.facebook.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.facebook.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    }
+}
