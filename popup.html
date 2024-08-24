@@ -13,11 +13,16 @@
         input {
             width: 50px;
         }
+
+        #timeSpent {
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <h2>Facebook Usage Limiter</h2>
+    <p>Time spent today: <span id="timeSpent">0</span> minutes</p>
     <p>Set time limit (minutes): <input type="number" id="timeLimit" min="1"></p>
     <button id="save">Save</button>
     <script src="popup.js"></script>

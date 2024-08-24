@@ -45,7 +45,9 @@ function startActiveTimer() {
                 const newTimeSpent = result.timeSpent + 1;
                 chrome.storage.sync.set({ timeSpent: newTimeSpent });
 
-                if (newTimeSpent >= result.timeLimit * 60) { // Convert minutes to seconds
+                updatePopup(); // Update the popup every second
+
+                if (newTimeSpent >= result.timeLimit * 60) {
                     if (activeTabId) {
                         chrome.tabs.sendMessage(activeTabId, { action: "showOverlay" });
                     }
@@ -86,6 +88,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
     }
 });
+
+
+function updatePopup() {
+    chrome.storage.sync.get(['timeSpent'], (result) => {
+        chrome.runtime.sendMessage({
+            action: "updateTimeSpent",
+            timeSpent: result.timeSpent || 0
+        });
+    });
+}
+
+chrome.action.onClicked.addListener((tab) => {
+    updatePopup();
+});
+
 
 // Check and reset daily usage every hour
 setInterval(resetDailyUsage, 3600000);
