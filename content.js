@@ -1,4 +1,6 @@
 let overlay;
+let lastActivityTime = Date.now();
+let isActive = false;
 
 function createOverlay() {
     if (overlay) return; // Prevent creating multiple overlays
@@ -8,7 +10,7 @@ function createOverlay() {
     overlay.style.left = '0';
     overlay.style.width = '100%';
     overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
     overlay.style.zIndex = '9999';
     overlay.style.display = 'flex';
     overlay.style.justifyContent = 'center';
@@ -17,7 +19,7 @@ function createOverlay() {
     overlay.style.color = 'white';
     overlay.style.fontSize = '24px';
     overlay.innerHTML = `
-    <p>Time's up!</p>
+    <h1>Time's up!</h1>
     <p>It's time to go back to work.</p>
     <button id="leaveButton" style="margin-top: 20px; padding: 10px 20px; font-size: 18px;">Leave Facebook</button>
   `;
@@ -28,31 +30,37 @@ function createOverlay() {
     });
 }
 
-function checkTimeSpent() {
-    chrome.storage.sync.get(['timeLimit', 'startTime'], (result) => {
-        const currentTime = Date.now();
-        const startTime = result.startTime || currentTime;
-        const timeSpent = (currentTime - startTime) / 60000; // Convert to minutes
-
-        if (timeSpent >= result.timeLimit) {
-            createOverlay();
-        } else {
-            // Schedule the next check
-            setTimeout(checkTimeSpent, 60000); // Check every minute
+function updateActiveState() {
+    const currentTime = Date.now();
+    if (currentTime - lastActivityTime < 60000) { // 1 minute of inactivity
+        if (!isActive) {
+            isActive = true;
+            chrome.runtime.sendMessage({ action: "setActive", isActive: true });
         }
-
-        // Update the start time if it hasn't been set
-        if (!result.startTime) {
-            chrome.storage.sync.set({ startTime: startTime });
+    } else {
+        if (isActive) {
+            isActive = false;
+            chrome.runtime.sendMessage({ action: "setActive", isActive: false });
         }
-    });
+    }
 }
 
-// Start checking time spent
-checkTimeSpent();
+// Event listeners for user activity
+['mousemove', 'keydown', 'scroll', 'click'].forEach(eventType => {
+    document.addEventListener(eventType, () => {
+        lastActivityTime = Date.now();
+        updateActiveState();
+    });
+});
+
+// Start updating active state
+setInterval(updateActiveState, 60000); // Check activity every minute
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "showOverlay") {
         createOverlay();
     }
 });
+
+// Notify background script when the page is loaded
+chrome.runtime.sendMessage({ action: "pageLoaded" });
